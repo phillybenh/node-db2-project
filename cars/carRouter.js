@@ -3,11 +3,11 @@ const knex = require('knex');
 
 const db = require('../data/dbConnection.js');
 
-const { isValidPOST } = require('./carServices.js')
+const { isValidPOST, uniqueVIN } = require('./carServices.js')
 
 const router = express.Router();
 
-router.post('/', (req, res) => {
+router.post('/', uniqueVIN, (req, res) => {
     const car = req.body;
     if (isValidPOST(car)) {
         db('car-dealer')
@@ -24,36 +24,7 @@ router.post('/', (req, res) => {
         res.status(400).json({ message: "Please provide a valid car object." })
     }
 })
-/*
-router.get('/', (req, res) => {
-    // console.log(req)
-    const query = req.query;
-    if (Object.keys(query).length === 0){
-        db('accounts')
-            .then(accounts => {
-                res.status(200).json({ data: accounts })
-            })
-            .catch(error => {
-                console.log(error)
-                res.status(500).json({ message: error.message })
-            });
-    }
-    else if (isValidQuery(query)) {
-    db('accounts')
-        .limit(query.limit)
-        .orderBy(query.sortby, query.sortdir)
-        .then(accounts => {
-            res.status(200).json({ data: accounts })
-        })
-        .catch(error => {
-            console.log(error)
-            res.status(500).json({ message: error.message })
-        });
-    } else {
-        res.status(400).json({ message: "Please provide a valid query." })
-    }
-})
-*/
+
 router.get('/', (req, res) => {
     const query = req.query;
     if (Object.keys(query).length === 0) {
@@ -68,8 +39,14 @@ router.get('/', (req, res) => {
     } else {
         db('car-dealer')
             .where('VIN', query.VIN)
+            .first()
             .then(cars => {
+                if (cars) {
                 res.status(200).json({ data: cars })
+                } else {
+                    res.status(404).json({ message: "No car by that VIN." })
+
+                }
             })
             .catch(error => {
                 console.log(error)
@@ -95,7 +72,5 @@ router.get('/:id', (req, res) => {
             res.status(500).json({ message: error.message })
         });
 })
-
-
 
 module.exports = router;

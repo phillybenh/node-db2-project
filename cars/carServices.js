@@ -1,6 +1,12 @@
+const express = require('express');
+const router = express.Router();
+const knex = require('knex');
+
+const db = require('../data/dbConnection.js');
+
 module.exports = {
     isValidPOST,
-    // uniqueVIN
+    uniqueVIN
 }
 
 function isValidPOST(car) {
@@ -23,24 +29,27 @@ function isValidPOST(car) {
     }
 }
 
-// To DO -- middleware for checking VIN for dupes 
-// function uniqueVIN(req, res, next) {
-//     actionDB.get(req.params.id)
-//         .then(proj => {
-//             if (proj !== null) {
-//                 next();
-//             } else {
-//                 res.status(400).json({
-//                     message: "Please use a valid action ID."
-//                 })
-//             }
-//         })
-//         .catch(error => {
-//             res.status(500).json({
-//                 error: "The action information could not be retrieved from middleware."
-//             })
-//         })
-// }
+function uniqueVIN(req, res, next) {
+    const query = req.body;
+    if (!query.VIN) {
+        next();
+    } else {
+        db('car-dealer')
+            .where('VIN', query.VIN)
+            .then(cars => {
+                console.log(cars, "sdgsdfg")
+                if (cars.length === 0) {
+                    next();
+                } else {
+                    res.status(404).json({ message: "That VIN already exists in the database." })
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                res.status(500).json({ message: error.message })
+            });
+    }
+}
 
 // function isValidPUT(account) {
 //     return Boolean(account.name || account.budget);
