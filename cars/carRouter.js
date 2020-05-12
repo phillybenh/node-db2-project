@@ -9,11 +9,11 @@ const router = express.Router();
 
 router.post('/', (req, res) => {
     const car = req.body;
-    console.log(car);
     if (isValidPOST(car)) {
     db('car-dealer')
         .insert(car, 'id')
         .then(ids => {
+            // console.log({res});
             res.status(201).json({ data: ids })
         })
         .catch(error => {

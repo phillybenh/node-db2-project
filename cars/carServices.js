@@ -1,7 +1,6 @@
 module.exports = {
     isValidPOST,
-    // isValidPUT,
-    // isValidQuery
+    // uniqueVIN
 }
 
 function isValidPOST(car) {
@@ -15,14 +14,33 @@ function isValidPOST(car) {
         return false
     } else if (!car.Mileage || typeof car.Mileage !== "number") {
         return false
-    // } else if (!car.Transmission || typeof car.Transmission !== "number") {
-    //     return false
-    // } else if (!car.'Title Type' || typeof car.'Title Type' !== "number") {
-    //     return false
-    // } else {
+    } else if (car.Transmission && typeof car.Transmission !== "string") {
+        return false
+    } else if (car.TitleType && typeof car.TitleType !== "string") {
+        return false
+    } else {
         return true
     }
 }
+
+// To DO
+// function uniqueVIN(req, res, next) {
+//     actionDB.get(req.params.id)
+//         .then(proj => {
+//             if (proj !== null) {
+//                 next();
+//             } else {
+//                 res.status(400).json({
+//                     message: "Please use a valid action ID."
+//                 })
+//             }
+//         })
+//         .catch(error => {
+//             res.status(500).json({
+//                 error: "The action information could not be retrieved from middleware."
+//             })
+//         })
+// }
 
 // function isValidPUT(account) {
 //     return Boolean(account.name || account.budget);

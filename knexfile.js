@@ -7,7 +7,10 @@ module.exports = {
     connection: {
       filename: './data/car-dealer.db3'
     },
-    useNullAsDefault: true // for SQLite only
+    useNullAsDefault: true, // for SQLite only
+    seeds: {
+      directory: './data/seeds'
+    }
   },
 
   production: {
