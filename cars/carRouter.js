@@ -3,13 +3,16 @@ const knex = require('knex');
 
 const db = require('../data/dbConnection.js');
 
+const { isValidPOST } = require('./carServices.js')
 
 const router = express.Router();
 
 router.post('/', (req, res) => {
-    const account = req.body;
+    const car = req.body;
+    console.log(car);
+    if (isValidPOST(car)) {
     db('car-dealer')
-        .insert(account, 'id')
+        .insert(car, 'id')
         .then(ids => {
             res.status(201).json({ data: ids })
         })
@@ -17,6 +20,9 @@ router.post('/', (req, res) => {
             console.log(error)
             res.status(500).json({ message: error.message })
         });
+    } else {
+        res.status(400).json({ message: "Please provide a valid car object." })
+    }
 })
 
 router.get('/', (req, res) => {
