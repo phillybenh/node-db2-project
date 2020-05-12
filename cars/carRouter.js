@@ -10,30 +10,72 @@ const router = express.Router();
 router.post('/', (req, res) => {
     const car = req.body;
     if (isValidPOST(car)) {
-    db('car-dealer')
-        .insert(car, 'id')
-        .then(ids => {
-            // console.log({res});
-            res.status(201).json({ data: ids })
+        db('car-dealer')
+            .insert(car, 'id')
+            .then(ids => {
+                // console.log({res});
+                res.status(201).json({ data: ids })
+            })
+            .catch(error => {
+                console.log(error)
+                res.status(500).json({ message: error.message })
+            });
+    } else {
+        res.status(400).json({ message: "Please provide a valid car object." })
+    }
+})
+/*
+router.get('/', (req, res) => {
+    // console.log(req)
+    const query = req.query;
+    if (Object.keys(query).length === 0){
+        db('accounts')
+            .then(accounts => {
+                res.status(200).json({ data: accounts })
+            })
+            .catch(error => {
+                console.log(error)
+                res.status(500).json({ message: error.message })
+            });
+    }
+    else if (isValidQuery(query)) {
+    db('accounts')
+        .limit(query.limit)
+        .orderBy(query.sortby, query.sortdir)
+        .then(accounts => {
+            res.status(200).json({ data: accounts })
         })
         .catch(error => {
             console.log(error)
             res.status(500).json({ message: error.message })
         });
     } else {
-        res.status(400).json({ message: "Please provide a valid car object." })
+        res.status(400).json({ message: "Please provide a valid query." })
     }
 })
-
+*/
 router.get('/', (req, res) => {
-    db('car-dealer')
-        .then(cars => {
-            res.status(200).json({ data: cars })
-        })
-        .catch(error => {
-            console.log(error)
-            res.status(500).json({ message: error.message })
-        });
+    const query = req.query;
+    if (Object.keys(query).length === 0) {
+        db('car-dealer')
+            .then(cars => {
+                res.status(200).json({ data: cars })
+            })
+            .catch(error => {
+                console.log(error)
+                res.status(500).json({ message: error.message })
+            });
+    } else {
+        db('car-dealer')
+            .where('VIN', query.VIN)
+            .then(cars => {
+                res.status(200).json({ data: cars })
+            })
+            .catch(error => {
+                console.log(error)
+                res.status(500).json({ message: error.message })
+            });
+    }
 })
 
 router.get('/:id', (req, res) => {
@@ -46,11 +88,14 @@ router.get('/:id', (req, res) => {
 
             } else {
                 res.status(404).json({ message: "No car by that ID." })
-            }        })
+            }
+        })
         .catch(error => {
             console.log(error)
             res.status(500).json({ message: error.message })
         });
 })
+
+
 
 module.exports = router;

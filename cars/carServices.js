@@ -23,7 +23,7 @@ function isValidPOST(car) {
     }
 }
 
-// To DO
+// To DO -- middleware for checking VIN for dupes 
 // function uniqueVIN(req, res, next) {
 //     actionDB.get(req.params.id)
 //         .then(proj => {
